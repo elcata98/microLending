@@ -7,43 +7,44 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class LoanApplication {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
-	@Column
-	@Min(100)
-	@Max(5000)
+	@Column(nullable=false)
+//	@Min(100)
+//	@Max(5000)
 	private Integer amount;
 	
-	@NotNull
-	@Column
-	@Min(1)
+	@Column(nullable=false)
+//	@Min(1)
 	private Integer term;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private Date applicationDate;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false, name="ip")
 	private String applicationIP;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private String riskType;
 	
-	@OneToOne
+	@OneToOne(mappedBy="loanApplication")
+	@JsonIgnore
 	private Loan loan;
+	
+	@ManyToOne
+	@JoinColumn(name="CLIENT_ID")
+	private Client client;
 
 	
 	public Long getId() {
@@ -101,5 +102,13 @@ public class LoanApplication {
 	public void setLoan(Loan loan) {
 		this.loan = loan;
 	}
-		
+	
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+
 }
