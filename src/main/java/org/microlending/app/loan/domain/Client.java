@@ -13,9 +13,19 @@ public class Client {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
-	@Column
+	@Column(nullable=false, unique=true)
 	private String userName;
+	
+	@Column(nullable=false)
+	private String firstName;
 
+	@Column(nullable=false)
+	private String lastName;
+
+	@Column(nullable=false)
+	private String bankAccount;
+
+	
 	public Long getId() {
 		return id;
 	}
@@ -30,6 +40,22 @@ public class Client {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 }
