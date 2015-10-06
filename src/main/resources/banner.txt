@@ -1,2 +1,3 @@
+Francisco Martínez Posadas (elcata98)
 Micro-Lending App ${application.formatted-version}
 Spring Boot ${spring-boot.formatted-version}
