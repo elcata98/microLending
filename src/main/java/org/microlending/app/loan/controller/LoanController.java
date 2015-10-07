@@ -18,7 +18,6 @@ import org.microlending.app.loan.repository.LoanRepository;
 import org.microlending.app.loan.service.RiskAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -186,7 +185,7 @@ public class LoanController {
 	}
 	
 	@RequestMapping(value="/search", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Iterable<Loan>> getLoanHistory(@Param("clientId") Long clientId){
+	public ResponseEntity<Iterable<Loan>> getLoanHistory(@RequestParam(value="clientId", required=true) Long clientId){
 		Client client = clientRepository.findOne(clientId);
 		Iterable<LoanApplication> loanApplications = loanApplicationRepository.findByClient(client); 
 		Iterable<Loan> result = loanRepository.findByLoanApplications(loanApplications);
