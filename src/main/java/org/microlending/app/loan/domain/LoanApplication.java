@@ -11,7 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @Entity
 public class LoanApplication {
@@ -30,6 +32,7 @@ public class LoanApplication {
 	private Integer term;
 	
 	@Column(nullable=false)
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
 	private Date applicationDate;
 	
 	@Column(nullable=false, name="ip")

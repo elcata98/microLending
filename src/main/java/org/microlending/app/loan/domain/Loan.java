@@ -13,20 +13,25 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+
 @Entity
 public class Loan {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	@Column(nullable=false)
 	private Double interest = 10.0;
 	
 	@Column(nullable=false)
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
 	private Date startDate;
 
 	@Column
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
 	private Date returnedDate;
 
 	@OneToOne
