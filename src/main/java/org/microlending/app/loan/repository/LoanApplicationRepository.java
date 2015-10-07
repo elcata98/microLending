@@ -7,4 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface LoanApplicationRepository extends CrudRepository<LoanApplication, Long> {
 
 	Iterable<LoanApplication> findByClient(Client client); 
+	
 }
