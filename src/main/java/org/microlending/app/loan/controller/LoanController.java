@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
 
 import org.microlending.app.loan.domain.Client;
 import org.microlending.app.loan.domain.Loan;
@@ -44,7 +45,7 @@ public class LoanController {
 
 	@Autowired
 	private LoanExtensionRepository loanExtensionRepository;
-
+	
 	@Value("${result.error}")
 	private String resultError;
 
@@ -65,6 +66,9 @@ public class LoanController {
 
 	@Value("${apply.result.ko.activeLoanFound}")
 	private String activeLoanFound;
+
+	@Value("${apply.result.ko.validation}")
+	private String validationError;
 
 	@Value("${extend.result.ok}")
 	private String extendResultOk;
@@ -101,9 +105,10 @@ public class LoanController {
 				RiskType risk = riskAnalysisService.riskAnalysis(client, amount);
 				loanApplication.setRiskType(risk.toString());
 		
-				loanApplicationRepository.save(loanApplication);
-				
-				switch(risk){
+				try{
+					loanApplicationRepository.save(loanApplication);
+					
+					switch(risk){
 					case NO_RISK:
 		//				Loan can be created
 						loan = new Loan();
@@ -123,6 +128,9 @@ public class LoanController {
 					default:
 		//				Default should only hit if new value is added to enum and this code is not update accordingly
 						result = ResponseEntity.badRequest().header(resultError,resultErrorUnknown).body(resultErrorUnknown);
+				}
+				}catch(ValidationException ve){
+					result = ResponseEntity.badRequest().header(resultError,validationError).body(validationError);
 				}
 			}
 		}else{

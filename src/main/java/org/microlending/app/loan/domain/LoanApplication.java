@@ -10,10 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class LoanApplication {
@@ -23,12 +25,12 @@ public class LoanApplication {
 	private Long id;
 	
 	@Column(nullable=false)
-//	@Min(100)
-//	@Max(5000)
+	@Min(100)
+	@Max(5000)
 	private Integer amount;
 	
 	@Column(nullable=false)
-//	@Min(1)
+	@Min(1)
 	private Integer term;
 	
 	@Column(nullable=false)

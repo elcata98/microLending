@@ -17,11 +17,9 @@ public class LoanExtension {
 	private Long id;
 	
 	@Column(nullable=false)
-//	@Min(1)
 	private Integer oldTerm;
 
 	@Column(nullable=false)
-//	@Min(1)
 	private Integer newTerm;
 
 	@Column(nullable=false)
