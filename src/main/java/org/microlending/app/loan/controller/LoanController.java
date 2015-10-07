@@ -2,6 +2,8 @@ package org.microlending.app.loan.controller;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.microlending.app.loan.domain.Client;
 import org.microlending.app.loan.domain.Loan;
 import org.microlending.app.loan.domain.LoanApplication;
@@ -11,6 +13,7 @@ import org.microlending.app.loan.repository.LoanApplicationRepository;
 import org.microlending.app.loan.repository.LoanRepository;
 import org.microlending.app.loan.service.RiskAnalysisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,41 +37,65 @@ public class LoanController {
 
 	@Autowired
 	private LoanApplicationRepository loanApplicationRepository;
+	
+	@Value("${result.error}")
+	private String resultError;
 
-	//POST
-	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Loan> applyForLoan(Long clientId, Integer amount, Integer term){
+	@Value("${result.error.unknown}")
+	private String resultErrorUnknown;
+
+	@Value("${apply.result.ok}")
+	private String applyResultOk;
+	
+	@Value("${apply.result.ko.highrisk}")
+	private String highRisk;
+	
+
+	@RequestMapping(value="/apply", method=RequestMethod.POST)
+	public ResponseEntity<String> applyForLoan(Long clientId, Integer amount, Integer term, HttpServletRequest request){
 		Client client = clientRepository.findOne(clientId);
 		
+//		Prepare the loan application
 		LoanApplication loanApplication = new LoanApplication();
 		loanApplication.setAmount(amount);
 		loanApplication.setApplicationDate(new Date());
 		loanApplication.setClient(client);
 		loanApplication.setTerm(term);
-		loanApplication.setApplicationIP("10.1.1.1");
+		loanApplication.setApplicationIP(request.getRemoteAddr());
+		
+//		Check for possible risks on that loan
 		RiskType risk = riskAnalysisService.riskAnalysis(client, amount);
 		loanApplication.setRiskType(risk.toString());
+
 		loanApplication = loanApplicationRepository.save(loanApplication);
 		
-		ResponseEntity<Loan> result;
+		ResponseEntity<String> result;
 		switch(risk){
 			case NO_RISK:
+//				Loan can be created
 				Loan loan = new Loan();
 				loan.setLoanApplication(loanApplication);
 				loan.setStartDate(new Date());
 				loan = loanRepository.save(loan);
-				result = ResponseEntity.ok().body(null);
+				result = ResponseEntity.ok().body(applyResultOk);
+				break;
+			case MAX_AMOUNT:
+//				Loan application higher than the max amount  
+				result = ResponseEntity.badRequest().header(resultError,highRisk).body(highRisk);
+				break;
+			case MAX_APPLICATIONS:
+//				Max applications in 1 day per user and IP reached
+				result = ResponseEntity.badRequest().header(resultError,highRisk).body(highRisk);
 				break;
 			default:
-				result = ResponseEntity.badRequest().header("Error","Risk associated to the loan is too high").body(null);
+//				Default should only hit if new value is added to enum and this code is not update accordingly
+				result = ResponseEntity.badRequest().header(resultError,resultErrorUnknown).body(resultErrorUnknown);
 		}
 		
 		return result;
 	}
 	
-	//PUT
-//	@RequestMapping("/extend")
-	@RequestMapping(method=RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value="extend", method=RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String extendLoan(Long clientId){
 		return "";
 	}
