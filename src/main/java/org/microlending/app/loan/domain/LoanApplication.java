@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -26,7 +25,6 @@ public class LoanApplication {
 	
 	@Column(nullable=false)
 	@Min(100)
-	@Max(5000)
 	private Integer amount;
 	
 	@Column(nullable=false)
@@ -38,7 +36,7 @@ public class LoanApplication {
 	private Date applicationDate;
 	
 	@Column(nullable=false, name="ip")
-	private String applicationIP;
+	private String applicationIp;
 	
 	@Column(nullable=false)
 	private String riskType;
@@ -84,12 +82,12 @@ public class LoanApplication {
 		this.applicationDate = applicationDate;
 	}
 
-	public String getApplicationIP() {
-		return applicationIP;
+	public String getApplicationIp() {
+		return applicationIp;
 	}
 
-	public void setApplicationIP(String applicationIP) {
-		this.applicationIP = applicationIP;
+	public void setApplicationIp(String applicationIp) {
+		this.applicationIp = applicationIp;
 	}
 
 	public String getRiskType() {

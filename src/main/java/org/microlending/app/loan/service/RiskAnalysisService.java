@@ -5,6 +5,6 @@ import org.microlending.app.loan.domain.RiskType;
 
 public interface RiskAnalysisService {
 
-	public RiskType riskAnalysis(Client client, Integer amount);
+	public RiskType riskAnalysis(Client client, Integer amount, String ipAddress);
 	
 }
