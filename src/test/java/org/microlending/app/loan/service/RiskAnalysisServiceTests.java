@@ -15,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@Sql("classpath:testingData.sql")
+@Sql("classpath:testingDataService.sql")
 @ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MicroLendingAppApplication.class)
@@ -45,8 +45,8 @@ public class RiskAnalysisServiceTests {
 	
 	@Test
 	@SqlGroup({
-		@Sql("classpath:testingData.sql"),
-		@Sql("classpath:testingDataMaxApplications.sql")}
+		@Sql("classpath:testingDataService.sql"),
+		@Sql("classpath:testingDataServiceMaxApplications.sql")}
 	)
 	public void testRiskAnalysisMaxApplicationsRisk(){
 		Client client = clientRepository.findAll().iterator().next();
