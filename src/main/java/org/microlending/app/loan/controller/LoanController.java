@@ -63,6 +63,12 @@ public class LoanController {
 	@Value("${apply.result.ko.highRisk}")
 	private String highRisk;
 
+	@Value("${apply.result.ko.highRisk.maxAmount}")
+	private String maxAmount;
+
+	@Value("${apply.result.ko.highRisk.maxApplications}")
+	private String maxApplications;
+
 	@Value("${apply.result.ko.activeLoanFound}")
 	private String activeLoanFound;
 
@@ -93,15 +99,16 @@ public class LoanController {
 				result = ResponseEntity.badRequest().header(resultError,activeLoanFound).body(activeLoanFound);
 			}else{
 		//		Prepare the loan application
+				String ipAddress = request.getRemoteAddr();
 				LoanApplication loanApplication = new LoanApplication();
 				loanApplication.setAmount(amount);
 				loanApplication.setApplicationDate(new Date());
 				loanApplication.setClient(client);
 				loanApplication.setTerm(term);
-				loanApplication.setApplicationIP(request.getRemoteAddr());
+				loanApplication.setApplicationIp(ipAddress);
 				
 		//		Check for possible risks on that loan
-				RiskType risk = riskAnalysisService.riskAnalysis(client, amount);
+				RiskType risk = riskAnalysisService.riskAnalysis(client,amount,ipAddress);
 				loanApplication.setRiskType(risk.toString());
 		
 				try{
@@ -118,11 +125,11 @@ public class LoanController {
 						break;
 					case MAX_AMOUNT:
 		//				Loan application higher than the max amount  
-						result = ResponseEntity.badRequest().header(resultError,highRisk).body(highRisk);
+						result = ResponseEntity.badRequest().header(resultError,highRisk).body(highRisk+maxAmount);
 						break;
 					case MAX_APPLICATIONS:
 		//				Max applications in 1 day per user and IP reached
-						result = ResponseEntity.badRequest().header(resultError,highRisk).body(highRisk);
+						result = ResponseEntity.badRequest().header(resultError,highRisk).body(highRisk+maxApplications);
 						break;
 					default:
 		//				Default should only hit if new value is added to enum and this code is not update accordingly
