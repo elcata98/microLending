@@ -40,6 +40,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-log4j')
     runtime('com.h2database:h2')
     testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('com.jayway.jsonpath:json-path:2.0.0')
 }
 
 task wrapper(type: Wrapper) {
