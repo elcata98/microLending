@@ -1,4 +1,4 @@
-package org.microlending.app.loan.config;
+package org.microlending.app.loan.configuration;
 
 import org.microlending.app.loan.aop.logging.LoggingAspect;
 import org.springframework.context.annotation.Bean;
