@@ -1,19 +1,19 @@
 package org.microlending.app.loan;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.microlending.app.loan.MicroLendingAppApplication;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runners.Suite;
+import org.microlending.app.loan.controller.LoanControllerTests;
+import org.microlending.app.loan.repository.LoanApplicationRepositoryTests;
+import org.microlending.app.loan.repository.LoanRepositoryTests;
+import org.microlending.app.loan.service.RiskAnalysisServiceTests;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = MicroLendingAppApplication.class)
-@WebAppConfiguration
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	LoanControllerTests.class,
+	LoanApplicationRepositoryTests.class,
+	LoanRepositoryTests.class,
+	RiskAnalysisServiceTests.class
+})
 public class MicroLendingAppApplicationTests {
-
-	@Test
-	public void contextLoads() {
-	}
 
 }
