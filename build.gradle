@@ -14,12 +14,12 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'spring-boot' 
+apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management' 
 
 jar {
     baseName = 'microLendingApp'
-    version = '0.0.1-SNAPSHOT'
+    version = '1.0'
 }
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
