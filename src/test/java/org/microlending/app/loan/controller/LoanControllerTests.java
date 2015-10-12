@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,6 +56,9 @@ public class LoanControllerTests {
 	@Value("${apply.result.ko.activeLoanFound}")
 	private String activeLoanFound;
 	
+	@Value("${apply.result.ko.validation}")
+	private String validationError;
+	
 	@Value("${apply.result.ko.highRisk}")
 	private String highRisk;
 
@@ -80,11 +82,12 @@ public class LoanControllerTests {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
     }
 	
-	@After
-	public void tearDown(){
-		
-	}
-
+	/**
+	 * 	Tests for the get loan history method: 
+	 * 	{@link org.microlending.app.loan.controller.LoanController#getLoanHistory(Long)}} 	
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testGetLoanHistory() throws Exception{
 		Client client = clientRepository.findAll().iterator().next();
@@ -114,6 +117,13 @@ public class LoanControllerTests {
 			.andExpect(jsonPath("$",hasSize(0)));
 	}
 
+	
+	/**
+	 * 	Tests for the get loan history method: 
+	 * 	{@link org.microlending.app.loan.controller.LoanController#applyForLoan(Long, Integer, Integer, javax.servlet.http.HttpServletRequest)}} 	
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	@Sql("classpath:testingDataOnlyClient.sql")
 	public void testApplyForLoan() throws Exception{
@@ -154,6 +164,21 @@ public class LoanControllerTests {
 
 	@Test
 	@Sql("classpath:testingDataOnlyClient.sql")
+	public void testApplyForLoanValidationError() throws Exception{
+		Client client = clientRepository.findAll().iterator().next();
+		String error = mockMvc.perform(post("/api/loans/apply")
+								.param(PARAM_CLIENT_ID,client.getId().toString())
+								.param(PARAM_AMOUNT,"1")
+								.param(PARAM_TERM,"2"))
+							.andExpect(status().isBadRequest())
+							.andReturn()
+							.getResponse()
+							.getHeader(resultError);
+		assertTrue(validationError.equals(error));
+	}
+
+	@Test
+	@Sql("classpath:testingDataOnlyClient.sql")
 	public void testApplyForLoanMaxAmountRisk() throws Exception{
 		Client client = clientRepository.findAll().iterator().next();
 		MvcResult result = mockMvc.perform(post("/api/loans/apply")
@@ -186,7 +211,7 @@ public class LoanControllerTests {
 		assertTrue(result.getResponse().getContentAsString().contains(maxApplications));
 	}
 
-//	Only one of themas per decission
+//	Only one of them as per decision. No need to test all required parameters
 	@Test
 	public void testApplyForLoanMissingClientParameter() throws Exception{
 		MvcResult result = mockMvc.perform(post("/api/loans/apply")
@@ -197,6 +222,13 @@ public class LoanControllerTests {
 		assertTrue(result.getResponse().getErrorMessage().contains(PARAM_CLIENT_ID));
 	}
 
+	
+	/**
+	 * 	Tests for the get loan history method: 
+	 * 	{@link org.microlending.app.loan.controller.LoanController#extendLoan(Long)}} 	
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testExtendLoan() throws Exception{
 		Client client = clientRepository.findAll().iterator().next();

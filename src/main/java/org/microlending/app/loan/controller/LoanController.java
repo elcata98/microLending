@@ -45,6 +45,9 @@ public class LoanController {
 	@Autowired
 	private LoanExtensionRepository loanExtensionRepository;
 	
+	/*
+	 * 	Text messages stored in messages.properties
+	 */
 	@Value("${result.error}")
 	private String resultError;
 
@@ -85,14 +88,30 @@ public class LoanController {
 	private Double extendInterest;
 
 
+	/**
+	 * 	Method to apply for a loan.
+	 * 	Loan will be created if is requested by a valid client 
+	 * 	who has no other active loans and no associated risks are found. 
+	 * 
+	 * @param clientId
+	 * @param amount
+	 * @param term
+	 * @param request
+	 * @return HTTP response, that can be either OK (200) or 
+	 * 			Bad Request (400) with the corresponding error message
+	 */
 	@RequestMapping(value="/apply", method=RequestMethod.POST)
 	public ResponseEntity<String> applyForLoan(@RequestParam(required=true) Long clientId, @RequestParam(required=true) Integer amount, @RequestParam(required=true) Integer term, HttpServletRequest request){
 		ResponseEntity<String> result;
 
 		Client client = clientRepository.findOne(clientId);
 		
+//		First check if the user already exists. 
+//		Otherwise response will be "Bad Request (400)"
 		if(client!=null){
-	//		Check if the user already has an active loan in the system
+//			Check if the user already has an active loan in the system.
+//			In that case response will be "Bad Request (400)"
+			
 			Loan loan = loanRepository.findActiveLoanByClient(client);
 	
 			if(loan!=null){
@@ -112,8 +131,10 @@ public class LoanController {
 				loanApplication.setRiskType(risk.toString());
 		
 				try{
+//					We want to keep track of non accepted applications as well
 					loanApplicationRepository.save(loanApplication);
 					
+//					Decide from the risk analysis service result if loan is granted
 					switch(risk){
 					case NO_RISK:
 		//				Loan can be created
@@ -134,8 +155,9 @@ public class LoanController {
 					default:
 		//				Default should only hit if new value is added to enum and this code is not update accordingly
 						result = ResponseEntity.badRequest().header(resultError,resultErrorUnknown).body(resultErrorUnknown);
-				}
+					}
 				}catch(ValidationException ve){
+//					In case that Loan and LoanApplication validation failure
 					result = ResponseEntity.badRequest().header(resultError,validationError).body(validationError);
 				}
 			}
@@ -145,14 +167,28 @@ public class LoanController {
 		return result;
 	}
 	
+	/**
+	 * 	Method to extend a loan.
+	 * 	Loan will be extended if is requested by a valid client 
+	 * 	who already has an active loan (which ill be extended). 
+	 * 
+	 * @param clientId
+	 * @return HTTP response, that can be either OK (200) or 
+	 * 			Bad Request (400) with the corresponding error message
+	 */
 	@RequestMapping(value="/extend", method=RequestMethod.GET)
 	public ResponseEntity<String> extendLoan(@RequestParam(value="clientId",required=true) Long clientId){
 		ResponseEntity<String> result;
 
 		Client client = clientRepository.findOne(clientId);
+
+//		First check if the user already exists. 
+//		Otherwise response will be "Bad Request (400)"
 		if(client!=null){
 			Loan loan = loanRepository.findActiveLoanByClient(client);
 			
+//			Check if the user already has an active loan in the system.
+//			Otherwise response will be "Bad Request (400)"
 			if(loan!=null){
 				LoanExtension activeExtension = loan.getActiveLoanExtension();
 				LoanExtension newExtension = new LoanExtension();
@@ -191,6 +227,15 @@ public class LoanController {
 		return result;
 	}
 	
+	/**
+	 * 	Method to get all the loans for a given client.
+	 * 	It gets first the loan applications for the client and then 
+	 * 	queries for the related loans.
+	 * 	In case of invalid client, method will return empty result.
+	 * 
+	 * @param clientId
+	 * @return Iterable in JSON format with all the loans for the requested client
+	 */
 	@RequestMapping(value="/search", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Iterable<Loan>> getLoanHistory(@RequestParam(value="clientId", required=true) Long clientId){
 		Client client = clientRepository.findOne(clientId);

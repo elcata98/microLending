@@ -25,6 +25,18 @@ public class RiskAnalysisServiceImpl implements RiskAnalysisService {
 	private Integer maxApplications;
 
 	
+	/**
+	 * 	Method that checks for the risk associated to a loan application.
+	 * 	It'll check first for the number of applications the client did
+	 * 	on the current day. Later will check if the loan application
+	 * 	surpasses the maximum amount allowed
+	 * 
+	 * @param client a valid client
+	 * @param amount
+	 * @param term
+	 * @param request
+	 * @return RiskType 
+	 */
 	public RiskType riskAnalysis(Client client, Integer amount, String ipAddress) {
 		RiskType result = RiskType.NO_RISK;
 		

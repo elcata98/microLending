@@ -32,6 +32,11 @@ public class RiskAnalysisServiceTests {
 	
 	private static final String IP_ADDRESS = "127.0.0.1";
 	
+	
+	/**
+	 * 	Tests for the risk analysis service: 
+	 * 	{@link org.microlending.app.loan.service.impl.RiskAnalysisServiceImpl#riskAnalysis(Client, Integer, String)}} 	
+	 */
 	@Test
 	public void testRiskAnalysisNoRisk(){
 		Client client = clientRepository.findAll().iterator().next();
