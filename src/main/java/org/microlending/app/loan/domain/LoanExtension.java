@@ -6,39 +6,33 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class LoanExtension {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
-	@Column
-	@Min(1)
+	@Column(nullable=false)
 	private Integer oldTerm;
 
-	@NotNull
-	@Column
-	@Min(1)
+	@Column(nullable=false)
 	private Integer newTerm;
 
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private Double oldInterest;
 
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private Double newInterest;
 
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private Boolean active;
 
 	@ManyToOne
+	@JsonIgnore
 	private Loan loan;
 
 	

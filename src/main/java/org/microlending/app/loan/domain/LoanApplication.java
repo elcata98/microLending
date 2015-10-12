@@ -7,43 +7,47 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class LoanApplication {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	@Min(100)
-	@Max(5000)
 	private Integer amount;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	@Min(1)
 	private Integer term;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
 	private Date applicationDate;
 	
-	@NotNull
-	@Column
-	private String applicationIP;
+	@Column(nullable=false, name="ip")
+	private String applicationIp;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private String riskType;
 	
-	@OneToOne
+	@OneToOne(mappedBy="loanApplication")
+	@JsonIgnore
 	private Loan loan;
+	
+	@ManyToOne
+	@JoinColumn(name="CLIENT_ID")
+	private Client client;
 
 	
 	public Long getId() {
@@ -78,12 +82,12 @@ public class LoanApplication {
 		this.applicationDate = applicationDate;
 	}
 
-	public String getApplicationIP() {
-		return applicationIP;
+	public String getApplicationIp() {
+		return applicationIp;
 	}
 
-	public void setApplicationIP(String applicationIP) {
-		this.applicationIP = applicationIP;
+	public void setApplicationIp(String applicationIp) {
+		this.applicationIp = applicationIp;
 	}
 
 	public String getRiskType() {
@@ -101,5 +105,13 @@ public class LoanApplication {
 	public void setLoan(Loan loan) {
 		this.loan = loan;
 	}
-		
+	
+	public Client getClient() {
+		return client;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+
 }

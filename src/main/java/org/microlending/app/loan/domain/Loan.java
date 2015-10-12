@@ -8,35 +8,47 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 @Entity
 public class Loan {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
 	private Double interest = 10.0;
 	
-	@NotNull
-	@Column
+	@Column(nullable=false)
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
 	private Date startDate;
 
 	@Column
+	@JsonFormat(shape=Shape.STRING, pattern="yyyy-MM-dd hh:mm:ss")
 	private Date returnedDate;
 
 	@OneToOne
+	@JoinColumn(name="LOAN_APPLICATION_ID")
 	private LoanApplication loanApplication;
 
 	@OneToOne
-	private LoanExtension currentLoanExtension;
+	@JoinColumn(name="ACTIVE_LOAN_EXTENSION_ID")
+	private LoanExtension activeLoanExtension;
 
 	@OneToMany
+	@JoinTable(name="LOAN_LOAN_EXTENSION", 
+		joinColumns=
+            @JoinColumn(name="LOAN_ID", referencedColumnName="ID"),
+        inverseJoinColumns=
+            @JoinColumn(name="LOAN_EXTENSION_ID", referencedColumnName="ID")
+	)
 	private List<LoanExtension> loanExtensions;
 
 	
@@ -80,12 +92,12 @@ public class Loan {
 		this.loanApplication = loanApplication;
 	}
 
-	public LoanExtension getCurrentLoanExtension() {
-		return currentLoanExtension;
+	public LoanExtension getActiveLoanExtension() {
+		return activeLoanExtension;
 	}
 
-	public void setCurrentLoanExtension(LoanExtension currentLoanExtension) {
-		this.currentLoanExtension = currentLoanExtension;
+	public void setCurrentLoanExtension(LoanExtension activeLoanExtension) {
+		this.activeLoanExtension = activeLoanExtension;
 	}
 
 	public List<LoanExtension> getLoanExtensions() {
@@ -95,5 +107,5 @@ public class Loan {
 	public void setLoanExtensions(List<LoanExtension> loanExtensions) {
 		this.loanExtensions = loanExtensions;
 	}
-	
+
 }

@@ -15,7 +15,7 @@ public class LoggingAspect {
 
 	private static final Logger log = Logger.getLogger(LoggingAspect.class);
 	
-	@Pointcut("execution(public * org.homework.app.loan.controller.*.*(..))")
+	@Pointcut("execution(public * org.microlending.app.loan.controller.*.*(..))")
 	public void loggingPointcut() {}
 	
 	@AfterThrowing(pointcut="loggingPointcut()", throwing="e")
