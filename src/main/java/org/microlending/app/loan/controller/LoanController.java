@@ -104,7 +104,7 @@ public class LoanController {
 	public ResponseEntity<String> applyForLoan(@RequestParam(required=true) Long clientId, @RequestParam(required=true) Integer amount, @RequestParam(required=true) Integer term, HttpServletRequest request){
 		ResponseEntity<String> result;
 
-		Client client = clientRepository.findOne(clientId);
+		Client client = clientRepository.findById(clientId).get();
 		
 //		First check if the user already exists. 
 //		Otherwise response will be "Bad Request (400)"
@@ -180,7 +180,7 @@ public class LoanController {
 	public ResponseEntity<String> extendLoan(@RequestParam(value="clientId",required=true) Long clientId){
 		ResponseEntity<String> result;
 
-		Client client = clientRepository.findOne(clientId);
+		Client client = clientRepository.findById(clientId).get();
 
 //		First check if the user already exists. 
 //		Otherwise response will be "Bad Request (400)"
@@ -238,7 +238,7 @@ public class LoanController {
 	 */
 	@RequestMapping(value="/search", method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Iterable<Loan>> getLoanHistory(@RequestParam(value="clientId", required=true) Long clientId){
-		Client client = clientRepository.findOne(clientId);
+		Client client = clientRepository.findById(clientId).get();
 		Iterable<LoanApplication> loanApplications = loanApplicationRepository.findByClient(client); 
 		Iterable<Loan> result = loanRepository.findByLoanApplications(loanApplications);
 		return new ResponseEntity<Iterable<Loan>>(result,HttpStatus.OK);

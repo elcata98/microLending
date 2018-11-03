@@ -2,6 +2,7 @@
 /**/.classpath
 /**/.eclipse
 /**/target
+/**/build
 /**/.project
 /**/.settings
 /**/*.iml
